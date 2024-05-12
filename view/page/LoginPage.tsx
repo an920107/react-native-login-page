@@ -2,27 +2,35 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, TextInput, Button, TouchableOpacity } from 'react-native'
 import { styles } from '../style/styles'
 import AbundantTextInput from '../component/AbundantTextInput';
+import { StackScreenProps } from '@react-navigation/stack';
 
-type Props = {}
-
-export default function LoginPage({ }: Props) {
+export default function LoginPage(props: StackScreenProps<any, any>) {
   const [email, setEmail] = useState<string>("");
   const [emailErrorMessage, setEmailErrorMessage] = useState<string | undefined>(undefined);
   const [password, setPassword] = useState<string>("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string | undefined>(undefined);
 
   const handleLogin = () => {
-    if (email.length === 0)
-      setEmailErrorMessage("電子郵件不得為空");
-    else if (!new RegExp("^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]+$").test(email))
-      setEmailErrorMessage("電子郵件格式不符");
-    else setEmailErrorMessage(undefined);
+    var errorFlag = false;
 
-    if (password.length === 0)
+    if (email.length === 0) {
+      setEmailErrorMessage("電子郵件不得為空");
+      errorFlag = true;
+    } else if (!new RegExp("^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]+$").test(email)) {
+      setEmailErrorMessage("電子郵件格式不符");
+      errorFlag = true;
+    } else setEmailErrorMessage(undefined);
+
+    if (password.length === 0) {
       setPasswordErrorMessage("密碼不得為空");
-    else if (password.length < 8)
+      errorFlag = true;
+    } else if (password.length < 8) {
       setPasswordErrorMessage("密碼長度必須至少為 8");
-    else setPasswordErrorMessage(undefined);
+      errorFlag = true;
+    } else setPasswordErrorMessage(undefined);
+
+    if (!errorFlag)
+      props.navigation.replace("Home");
   };
 
   return (
@@ -33,7 +41,7 @@ export default function LoginPage({ }: Props) {
         <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: "#000", marginHorizontal: 6 }}></View>
         <View style={{ flex: 1, height: 8, borderRadius: 3, backgroundColor: "#000" }}></View>
       </View>
-      <View style={{ height: 40 }} />
+      <View style={{ height: 60 }} />
       <AbundantTextInput
         hint="電子郵件"
         value={email}
